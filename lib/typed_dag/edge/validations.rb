@@ -4,9 +4,9 @@ module TypedDag::Edge
 
     included do
       validates_uniqueness_of :from,
-                              scope: [:to],
+                              scope: [:graph, :to],
                               conditions: -> {
-                                where.not("#{_dag_options.type_columns.join(' + ')} > 1")
+                                where.not('depth > 1')
                               }
 
       validate :no_circular_dependency

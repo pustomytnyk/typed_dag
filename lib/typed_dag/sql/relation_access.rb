@@ -12,8 +12,6 @@ module TypedDag::Sql::RelationAccess
              :from_column,
              :to_column,
              :count_column,
-             :type_columns,
-             :type_select_list,
              to: :helper
 
     def id_value
@@ -34,12 +32,6 @@ module TypedDag::Sql::RelationAccess
 
     def uuid?(column)
       relation.class.columns_hash[column].type == :uuid
-    end
-
-    def type_values
-      type_columns.map do |column|
-        relation.send(column)
-      end
     end
 
     def helper

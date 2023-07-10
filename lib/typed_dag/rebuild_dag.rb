@@ -21,7 +21,7 @@ module TypedDag::RebuildDag
     private
 
     def truncate_and_rebuild
-      _dag_options.edge_class.where("#{dag_helper.sum_of_type_columns} != 1").delete_all
+      _dag_options.edge_class.where("depth != 1").delete_all
 
       insert_transitive_relations
 

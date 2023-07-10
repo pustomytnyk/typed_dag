@@ -31,7 +31,7 @@ module TypedDag::Sql::TruncateClosure
           (#{closure_select}) removed_#{table_name}
         ON #{table_name}.#{from_column} = removed_#{table_name}.#{from_column}
         AND #{table_name}.#{to_column} = removed_#{table_name}.#{to_column}
-        AND #{types_equality_condition}
+        AND #{table_name}.graph = removed_#{table_name}.graph
         SET
           #{table_name}.#{count_column} = #{table_name}.#{count_column} - removed_#{table_name}.#{count_column}
       SQL
@@ -46,28 +46,22 @@ module TypedDag::Sql::TruncateClosure
           (#{closure_select}) removed_#{table_name}
         WHERE #{table_name}.#{from_column} = removed_#{table_name}.#{from_column}
         AND #{table_name}.#{to_column} = removed_#{table_name}.#{to_column}
-        AND #{types_equality_condition}
+        AND #{table_name}.graph = removed_#{table_name}.graph
       SQL
     end
 
     def selection_table
       <<-SQL
         (
-         SELECT COUNT(*) #{count_column}, #{from_column}, #{to_column}, #{type_select_list}
+         SELECT COUNT(*) #{count_column}, #{from_column}, #{to_column}, graph, depth
          FROM
            (#{closure_select}) aggregation
-         GROUP BY #{from_column}, #{to_column}, #{type_select_list})
+         GROUP BY #{from_column}, #{to_column}, graph, depth
       SQL
     end
 
     def closure_select
       TypedDag::Sql::SelectClosure.sql(relation)
-    end
-
-    def types_equality_condition
-      type_columns.map do |column|
-        "#{table_name}.#{column} = removed_#{table_name}.#{column}"
-      end.join(' AND ')
     end
   end
 end

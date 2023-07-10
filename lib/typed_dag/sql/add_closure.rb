@@ -57,7 +57,7 @@ module TypedDag::Sql::AddClosure
     end
 
     def column_list
-      "#{from_column}, #{to_column}, #{type_select_list}"
+      "#{from_column}, #{to_column}, graph, depth"
     end
   end
 end

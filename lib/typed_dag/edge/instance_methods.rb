@@ -8,7 +8,7 @@ module TypedDag::Edge
       end
 
       def direct?
-        _dag_options.type_columns.one? { |column| send(column) == 1 }
+        depth == 1
       end
     end
   end

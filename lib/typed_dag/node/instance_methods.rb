@@ -33,12 +33,12 @@ module TypedDag::Node
 
         define_method :"#{config[:all_to]}_of_depth" do |depth|
           send(config[:all_to])
-            .where(_dag_options.edge_table_name => { key => depth })
+            .where(_dag_options.edge_table_name => { graph: key, depth: depth })
         end
 
         define_method :"#{config[:all_from]}_of_depth" do |depth|
           send(config[:all_from])
-            .where(_dag_options.edge_table_name => { key => depth })
+            .where(_dag_options.edge_table_name => { graph: key, depth: depth })
         end
 
         define_method :"self_and_#{config[:all_from]}" do

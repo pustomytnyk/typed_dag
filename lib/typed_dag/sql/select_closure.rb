@@ -17,12 +17,14 @@ module TypedDag::Sql::SelectClosure
         SELECT
           #{from_column},
           #{to_column},
-          #{type_columns.join(', ')},
+          graph, 
+          depth,
           SUM(#{count_column}) AS #{count_column}
         FROM
           (SELECT
             r1.#{from_column},
             r2.#{to_column},
+            '#{relation.graph}' AS graph,
             #{depth_sum_case},
             r1.#{count_column} * r2.#{count_column} AS #{count_column}
           FROM
@@ -34,24 +36,23 @@ module TypedDag::Sql::SelectClosure
         GROUP BY
           #{from_column},
           #{to_column},
-          #{type_columns.join(', ')}
+          graph,
+          depth
       SQL
     end
 
     private
 
     def depth_sum_case
-      type_columns.map do |column|
-        <<-SQL
-          CASE
-            WHEN r1.#{to_column} = r2.#{from_column} AND (r1.#{column} > 0 OR r2.#{column} > 0)
-            THEN r1.#{column} + r2.#{column}
-            WHEN r1.#{to_column} != r2.#{from_column}
-            THEN r1.#{column} + r2.#{column} + #{relation.send(column)}
-            ELSE 0
-            END AS #{column}
-        SQL
-      end.map(&:strip).join(', ')
+      <<-SQL
+        CASE
+          WHEN r1.#{to_column} = r2.#{from_column} AND (r1.depth > 0 OR r2.depth > 0)
+          THEN r1.depth + r2.depth
+          WHEN r1.#{to_column} != r2.#{from_column}
+          THEN r1.depth + r2.depth + #{relation.send('depth')}
+          ELSE 0
+          END AS depth
+      SQL
     end
 
     def relations_join_combines_paths_condition

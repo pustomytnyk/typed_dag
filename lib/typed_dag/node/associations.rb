@@ -6,9 +6,9 @@ module TypedDag::Node
       def self.dag_relations_association_lambda(column, depth = 0)
         -> {
           if depth != 0
-            with_type_columns(column => depth)
+            where(graph: column, depth: depth)
           else
-            with_type_columns_not(column => depth)
+            where.not(graph: column, depth: depth)
           end
         }
       end

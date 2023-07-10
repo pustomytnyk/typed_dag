@@ -31,8 +31,8 @@ module TypedDag::Sql::GetCircular
       <<-SQL
         r1.#{helper.from_column} = r2.#{helper.to_column}
         AND r1.#{helper.to_column} = r2.#{helper.from_column}
-        AND (#{helper.sum_of_type_columns('r1.')} = 1)
-        AND (#{helper.sum_of_type_columns('r2.')} = #{depth})
+        AND (r1.depth = 1)
+        AND (r2.depth = #{depth})
       SQL
     end
   end

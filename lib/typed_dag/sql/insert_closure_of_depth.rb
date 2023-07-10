@@ -58,7 +58,7 @@ module TypedDag::Sql::InsertClosureOfDepth
     def insert_list
       [helper.from_column,
        helper.to_column,
-       helper.type_select_list].join(', ')
+       'graph', 'depth'].join(', ')
     end
 
     def select_list

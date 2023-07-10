@@ -32,12 +32,12 @@ module TypedDag::Sql::RemoveInvalidRelation
       <<-SQL
         #{helper.from_column} IN (#{ids.join(', ')})
         AND #{helper.to_column} IN (#{ids.join(', ')})
-        AND #{helper.sum_of_type_columns} = 1
+        AND depth = 1
       SQL
     end
 
     def order
-      helper.type_columns.reverse.map { |column| "#{column} DESC" }.join(', ')
+      'depth DESC'
     end
   end
 end

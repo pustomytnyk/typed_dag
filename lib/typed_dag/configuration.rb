@@ -1,8 +1,6 @@
 class TypedDag::Configuration
   def self.set(config)
-    config = [config] unless config.is_a?(Array)
-
-    @instances = config.map { |conf| new(conf) }
+    @instances = Array(config).map { |conf| new(conf) }
   end
 
   def self.[](class_name)
@@ -64,18 +62,18 @@ class TypedDag::Configuration
     config[:types] || default_types
   end
 
-  def type_columns
-    types.keys
-  end
-
   private
 
   attr_accessor :config
 
   def default_types
-    { hierarchy: { from: { name: :parent, limit: 1 },
-                   to: :children,
-                   all_from: :ancestors,
-                   all_to: :descendants } }
+    {
+      hierarchy: {
+        from: { name: :parent, limit: 1 },
+        to: :children,
+        all_from: :ancestors,
+        all_to: :descendants
+      }
+    }
   end
 end
